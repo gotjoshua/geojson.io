@@ -26841,7 +26841,12 @@ module.exports = function(context) {
 
     return function(selection) {
         var layers;
-
+		var Esri_WorldImagery = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+			attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+	  		minZoom: 1,
+			maxZoom:22,
+			maxNativeZoom: 18
+		});
         if (!(/a\.tiles\.mapbox.com/).test(L.mapbox.config.HTTP_URL)) {
             layers = [{
                 title: 'Mapbox',
@@ -26860,7 +26865,7 @@ module.exports = function(context) {
                 layer: L.mapbox.tileLayer('tmcw.map-7s15q36b')
             }, {
                 title: 'Satellite',
-                layer: L.mapbox.tileLayer('tmcw.map-j5fsp01s')
+                layer: Esri_WorldImagery // L.mapbox.tileLayer('tmcw.map-j5fsp01s')
             }, {
                 title: 'OCM',
                 layer: L.tileLayer('http://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {
@@ -26882,6 +26887,7 @@ module.exports = function(context) {
             layers.forEach(swap);
             function swap(l) {
                 var datum = d instanceof d3.selection ? d.datum() : d;
+				datum.layer.options.maxNativeZoom = l.layer.options.maxNativeZoom =21;
                 if (l.layer == datum.layer) context.map.addLayer(datum.layer);
                 else if (context.map.hasLayer(l.layer)) context.map.removeLayer(l.layer);
             }
